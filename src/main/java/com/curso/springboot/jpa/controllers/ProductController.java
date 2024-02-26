@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
-
+@CrossOrigin(origins = "http://localhost:4200", originPatterns = "*")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -29,15 +30,18 @@ public class ProductController {
     // @Autowired
     //private ProductValidation validation;
 
+    //se ejecuta despues del llamado de un metodo
 
     //regresa una lista
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<Product> list(){
         return service.findAll();
     }
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> view(@PathVariable Long id){
         Optional<Product> productOptional = service.findById(id);
         //validando si el producto esta presente
@@ -48,7 +52,9 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
+
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> create(@Valid @RequestBody Product product, BindingResult result){
         //Product productNew = service.save(product);
         //return (ResponseEntity<Product>) ResponseEntity.status(HttpStatus.CREATED).body(productNew);

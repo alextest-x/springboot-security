@@ -12,8 +12,5 @@ public interface UserService {
 
     User save(User user);
 
-
-
-
-
+    boolean existsByUsername(String username);
 }
